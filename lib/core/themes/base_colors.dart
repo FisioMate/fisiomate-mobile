@@ -36,7 +36,7 @@ abstract final class BaseColors {
   static const Color accent = Color(0xFF000000);
 
   // Neutrals
-  static const Color background = Color(0xFFFFFFFF);
+  static const Color background = Color(0xFFFDFDFD);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color border = Color(0xFFE0E0E0);
 

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+part of '_widgets.dart';
 
 class HomeShell extends StatefulWidget {
   final Widget child;
@@ -15,6 +15,7 @@ class _HomeShellState extends State<HomeShell> {
     return Scaffold(
       appBar: AppBar(title: Text("This is the HomeShell")),
       body: widget.child,
+      bottomNavigationBar: NavBar(),
     );
   }
 }

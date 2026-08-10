@@ -6,5 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 part 'home_shell.dart';
+part 'main_app_bar.dart';
 part 'main_button.dart';
 part 'nav_bar.dart';

@@ -12,10 +12,6 @@ class HomeShell extends StatefulWidget {
 class _HomeShellState extends State<HomeShell> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("This is the HomeShell")),
-      body: widget.child,
-      bottomNavigationBar: NavBar(),
-    );
+    return Scaffold(body: widget.child, bottomNavigationBar: NavBar());
   }
 }

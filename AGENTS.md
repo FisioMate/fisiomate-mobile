@@ -22,7 +22,7 @@ spike, which was a separate, disposable project).
 **Mobile (this repo):**
 
 - Flutter, feature-first architecture (data / domain / presentation per
-  feature, generated via `mason make feature`)
+  feature)
 - **Bloc/Cubit** — state management, paired with **Freezed** for state
   classes
 - **Freezed** — data models (JSON-serializable) and sealed unions

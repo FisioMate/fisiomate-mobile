@@ -14,6 +14,7 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           spacing: 8,
           children: [
+            CircularProgress(value: 0.3, strokeWidth: 5),
             MainButton(
               label: "Primary",
               onPressed: () {},

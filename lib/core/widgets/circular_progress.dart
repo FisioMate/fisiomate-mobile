@@ -37,13 +37,21 @@ class CircularProgress extends StatelessWidget {
             duration: animationDuration,
             curve: Curves.easeOutCubic,
             builder: (context, animatedValue, _) {
-              return CircularProgressIndicator(
-                value: animatedValue,
-                strokeWidth: strokeWidth,
-                strokeCap: StrokeCap.round,
-                backgroundColor: backgroundColor ?? BaseColors.secondary50,
-                valueColor: AlwaysStoppedAnimation(
-                  progressColor ?? BaseColors.secondary,
+              // CircularProgressIndicator ignores its parent's size and
+              // falls back to Flutter's ~36px default unless it's given
+              // tight constraints directly — the outer SizedBox alone
+              // only sizes the Stack, not the indicator itself.
+              return SizedBox(
+                width: size,
+                height: size,
+                child: CircularProgressIndicator(
+                  value: animatedValue,
+                  strokeWidth: strokeWidth,
+                  strokeCap: StrokeCap.round,
+                  backgroundColor: backgroundColor ?? BaseColors.secondary50,
+                  valueColor: AlwaysStoppedAnimation(
+                    progressColor ?? BaseColors.secondary,
+                  ),
                 ),
               );
             },

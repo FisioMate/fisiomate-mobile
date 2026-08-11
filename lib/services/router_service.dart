@@ -3,6 +3,8 @@ import 'package:fisiomate/features/auth/domain/repositories/_repositories.dart';
 import 'package:fisiomate/features/auth/presentation/cubit/_cubits.dart';
 import 'package:fisiomate/features/auth/presentation/pages/_pages.dart';
 import 'package:fisiomate/features/chat/presentation/pages/_pages.dart';
+import 'package:fisiomate/features/exercise/domain/entities/routine_item.dart';
+import 'package:fisiomate/features/exercise/presentation/pages/_pages.dart';
 import 'package:fisiomate/features/home/presentation/pages/_pages.dart';
 import 'package:fisiomate/features/profile/presentation/pages/_pages.dart';
 import 'package:fisiomate/features/progress/presentation/pages/_pages.dart';
@@ -44,6 +46,17 @@ final router = GoRouter(
     GoRoute(
       path: "/progress/history",
       builder: (context, state) => const AllSessionHistoryPage(),
+    ),
+    GoRoute(
+      path: "/exercise",
+      builder: (context, state) =>
+          PreExercisePage(routineItems: state.extra as List<RoutineItem>),
+    ),
+    GoRoute(
+      path: "/exercise/guide",
+      builder: (context, state) => ExerciseGuidePage(
+        routineItems: state.extra as List<RoutineItem>,
+      ),
     ),
 
     /* ---------------------------- Home Shell Pages ---------------------------- */

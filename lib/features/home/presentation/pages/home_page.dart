@@ -48,6 +48,14 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: replace with ExerciseRepository/GET /exercises once wired up —
+    // the backend only stores each routine item's schedule, so figuring
+    // out "today's" items from that schedule is frontend work regardless
+    // of whether the source is dummy or real.
+    final todaysRoutineItems = dummyRoutineItems
+        .where((item) => item.days.contains(DayOfWeek.fromDate(DateTime.now())))
+        .toList();
+
     return Scaffold(
       appBar: MainAppBar(showLogo: true, showNotification: true),
       body: SizedBox(
@@ -73,9 +81,12 @@ class HomePage extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 TodaySessionCard(
-                  exerciseCount: 3,
-                  totalMinutes: 16,
-                  onStartSession: () {},
+                  exerciseCount: todaysRoutineItems.length,
+                  totalMinutes: estimateRoutineDurationMinutes(
+                    todaysRoutineItems,
+                  ),
+                  onStartSession: () =>
+                      context.push('/exercise', extra: todaysRoutineItems),
                 ),
                 SizedBox(height: 48),
                 ExerciseCalendarCard(

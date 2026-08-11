@@ -6,14 +6,23 @@ import 'package:fisiomate/features/exercise/domain/entities/exercise.dart';
 // `core/utils/angle_catalog.dart` — that's what `computeAllCatalogAngles`
 // keys its output by.
 //
-// Thresholds are ported from the pose-detection-demo spike
-// (lib/features/pose/domain/exercise_catalog.dart), which itself flags
-// them as rough estimates from generic reference tables, not yet
-// calibrated through on-device testing. Validate before trusting counts.
+// Thresholds for squat/push-up/plank/shoulder-raise are ported from the
+// pose-detection-demo spike (lib/features/pose/domain/exercise_catalog.dart),
+// which itself flags them as rough estimates from generic reference
+// tables, not yet calibrated through on-device testing.
+// standing-leg-swing has no such reference — thresholds there are a
+// rough first guess of ours, even less trustworthy. Validate all of
+// these before trusting rep/hold counts.
 const List<Exercise> dummyExerciseCatalog = [
   RepBasedExercise(
     id: 'squat',
     name: 'Squat',
+    description:
+        'Berdiri tegak, kaki selebar bahu, tekuk lutut perlahan hingga '
+        '90°, lalu diri kembali ke posisi awal.',
+    iconUrl: 'https://placehold.co/96x96/008372/FFFFFF?text=Squat',
+    fullImageUrl:
+        'https://placehold.co/600x400/EAFCF7/006F5E?text=Squat+Lutut+Ringan',
     requiredLandmarks: [
       'leftHip',
       'leftKnee',
@@ -62,6 +71,11 @@ const List<Exercise> dummyExerciseCatalog = [
   RepBasedExercise(
     id: 'push-up',
     name: 'Push-up',
+    description:
+        'Posisi badan lurus dari bahu hingga tumit, tekuk siku hingga '
+        'dada mendekati lantai, lalu dorong kembali ke posisi awal.',
+    iconUrl: 'https://placehold.co/96x96/008372/FFFFFF?text=Push-up',
+    fullImageUrl: 'https://placehold.co/600x400/EAFCF7/006F5E?text=Push-up',
     requiredLandmarks: [
       'leftShoulder',
       'leftElbow',
@@ -148,6 +162,11 @@ const List<Exercise> dummyExerciseCatalog = [
   DurationBasedExercise(
     id: 'plank',
     name: 'Plank',
+    description:
+        'Topang tubuh dengan lengan bawah dan ujung kaki, jaga tubuh '
+        'tetap lurus dari bahu hingga tumit selama waktu yang ditentukan.',
+    iconUrl: 'https://placehold.co/96x96/008372/FFFFFF?text=Plank',
+    fullImageUrl: 'https://placehold.co/600x400/EAFCF7/006F5E?text=Plank',
     requiredLandmarks: [
       'leftShoulder',
       'leftHip',
@@ -176,8 +195,14 @@ const List<Exercise> dummyExerciseCatalog = [
     ],
   ),
   DurationBasedExercise(
-    id: 'shoulder-raise',
-    name: 'Shoulder Raise',
+    id: 'arm-raise',
+    name: 'Lateral Arm Raise',
+    description:
+        'Berdiri tegak, angkat kedua lengan ke samping hingga sejajar '
+        'bahu, luruskan siku, lalu tahan pada posisi tersebut.',
+    iconUrl: 'https://placehold.co/96x96/008372/FFFFFF?text=Bahu',
+    fullImageUrl:
+        'https://placehold.co/600x400/EAFCF7/006F5E?text=Peregangan+Bahu',
     requiredLandmarks: [
       'leftHip',
       'leftShoulder',
@@ -220,6 +245,40 @@ const List<Exercise> dummyExerciseCatalog = [
         missingMessage: 'Siku kanan tidak terdeteksi',
         belowMinMessage: 'Luruskan siku kanan',
         aboveMaxMessage: 'Jangan mengunci siku kanan secara berlebihan',
+      ),
+    ],
+  ),
+  // No reference implementation for this one (unlike the four above) —
+  // thresholds are our own rough first guess, treat as even less
+  // trustworthy until validated on-device.
+  RepBasedExercise(
+    id: 'standing-leg-swing',
+    name: 'Ayunan Tungkai Berdiri',
+    description:
+        'Berdiri tegak berpegangan pada kursi/dinding bila perlu, ayunkan '
+        'tungkai kanan ke depan lalu kembali ke posisi netral.',
+    iconUrl: 'https://placehold.co/96x96/008372/FFFFFF?text=Ayunan',
+    fullImageUrl:
+        'https://placehold.co/600x400/EAFCF7/006F5E?text=Ayunan+Tungkai',
+    requiredLandmarks: ['rightShoulder', 'rightHip', 'rightKnee'],
+    upRules: [
+      AngleRule(
+        angleName: 'rightHip',
+        minAngle: 100,
+        maxAngle: 140,
+        missingMessage: 'Posisikan diri Anda dalam bingkai kamera',
+        belowMinMessage: 'Jangan mengayun terlalu tinggi',
+        aboveMaxMessage: 'Ayunkan tungkai kanan lebih tinggi',
+      ),
+    ],
+    downRules: [
+      AngleRule(
+        angleName: 'rightHip',
+        minAngle: 160,
+        maxAngle: 180,
+        missingMessage: 'Posisikan diri Anda dalam bingkai kamera',
+        belowMinMessage: 'Kembalikan tungkai ke posisi netral',
+        aboveMaxMessage: 'Jangan mengunci pinggul secara berlebihan',
       ),
     ],
   ),

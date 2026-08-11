@@ -6,17 +6,27 @@ part of '_widgets.dart';
 class StatTile extends StatelessWidget {
   final String value;
   final String label;
+  final Color? color;
+  final Color? backgroundColor;
 
-  const StatTile({super.key, required this.value, required this.label});
+  const StatTile({
+    super.key,
+    required this.value,
+    required this.label,
+    this.color,
+    this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = color ?? BaseColors.accent;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
-        color: BaseColors.accentLight,
+        color: backgroundColor ?? BaseColors.accentLight,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: BaseColors.accent.withValues(alpha: 0.25)),
+        border: Border.all(color: resolvedColor.withValues(alpha: 0.25)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -24,7 +34,7 @@ class StatTile extends StatelessWidget {
           Text(
             value,
             style: FontTheme.headlineMedium.copyWith(
-              color: BaseColors.accent,
+              color: resolvedColor,
               fontWeight: FontWeight.bold,
             ),
           ),

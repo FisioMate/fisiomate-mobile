@@ -56,17 +56,11 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Patient> connectToPhysiotherapist(String connectionCode) async {
-    final model = await remoteDatasource.connectToPhysiotherapist(
-      connectionCode,
-    );
-    return Patient(
-      id: model.id,
-      name: model.name,
-      // PatientReadModel has no profile_image_url in this response shape.
-      profileImageUrl: null,
-      userId: model.userId ?? '',
-      physiotherapistId: model.physiotherapistId,
-      connectionCode: model.connectionCode,
-    );
+    // Don't build the returned Patient off this response — its fields
+    // (esp. `name`) aren't reliable in practice despite the schema. Just
+    // confirm the connect succeeded, then re-fetch the authoritative
+    // profile.
+    await remoteDatasource.connectToPhysiotherapist(connectionCode);
+    return getCurrentPatient();
   }
 }

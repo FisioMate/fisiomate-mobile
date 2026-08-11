@@ -59,9 +59,17 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                PersonalizedGreeting(
-                  name: "Lefi",
-                  quote: "Konsistensi adalah kunci pemulihan Anda.",
+                BlocBuilder<CurrentPatientCubit, CurrentPatientState>(
+                  builder: (context, state) {
+                    final name = switch (state) {
+                      CurrentPatientLoaded(:final patient) => patient.name,
+                      _ => 'Pasien',
+                    };
+                    return PersonalizedGreeting(
+                      name: name,
+                      quote: "Konsistensi adalah kunci pemulihan Anda.",
+                    );
+                  },
                 ),
                 SizedBox(height: 16),
                 TodaySessionCard(

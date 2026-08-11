@@ -16,7 +16,7 @@ abstract class AuthRemoteDatasource {
 
   Future<PatientModel> getCurrentPatient();
 
-  Future<PatientReadModel> connectToPhysiotherapist(String connectionCode);
+  Future<void> connectToPhysiotherapist(String connectionCode);
 }
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
@@ -61,13 +61,10 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   }
 
   @override
-  Future<PatientReadModel> connectToPhysiotherapist(
-    String connectionCode,
-  ) async {
-    final response = await client.post(
+  Future<void> connectToPhysiotherapist(String connectionCode) {
+    return client.post(
       EndPoints.patientConnect,
       data: {'connection_code': connectionCode},
     );
-    return PatientReadModel.fromJson(response.data as Map<String, dynamic>);
   }
 }

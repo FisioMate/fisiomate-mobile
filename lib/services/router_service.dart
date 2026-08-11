@@ -38,6 +38,14 @@ final router = GoRouter(
       builder: (context, state) => const ConnectionCodePage(),
     ),
 
+    /* ------------------------------ Detail Pages -------------------------------- */
+    // Outside the ShellRoute on purpose — drill-down pages like this one
+    // don't show the bottom nav bar.
+    GoRoute(
+      path: "/progress/history",
+      builder: (context, state) => const AllSessionHistoryPage(),
+    ),
+
     /* ---------------------------- Home Shell Pages ---------------------------- */
     ShellRoute(
       builder: (context, state, child) => BlocProvider(

@@ -11,7 +11,7 @@ final List<RoutineItem> dummyRoutineItems = [
   RoutineItem(
     id: 'routine-1',
     exercise: dummyExerciseCatalog.firstWhere(
-      (exercise) => exercise.id == 'shoulder-raise',
+      (exercise) => exercise.id == 'arm-raise',
     ),
     sets: 3,
     targetRepsOrSeconds: 10,

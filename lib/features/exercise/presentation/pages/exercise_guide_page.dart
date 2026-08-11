@@ -1,14 +1,9 @@
 part of '_pages.dart';
 
 class ExerciseGuidePage extends StatefulWidget {
-  final List<RoutineItem> routineItems;
-  final int initialIndex;
+  final ExerciseFlowArgs args;
 
-  const ExerciseGuidePage({
-    super.key,
-    required this.routineItems,
-    this.initialIndex = 0,
-  });
+  const ExerciseGuidePage({super.key, required this.args});
 
   @override
   State<ExerciseGuidePage> createState() => _ExerciseGuidePageState();
@@ -17,7 +12,6 @@ class ExerciseGuidePage extends StatefulWidget {
 class _ExerciseGuidePageState extends State<ExerciseGuidePage> {
   static const _countdownSeconds = 10;
 
-  late final int _index = widget.initialIndex;
   int _remainingSeconds = _countdownSeconds;
   Timer? _timer;
 
@@ -32,8 +26,7 @@ class _ExerciseGuidePageState extends State<ExerciseGuidePage> {
       if (_remainingSeconds <= 1) {
         timer.cancel();
         setState(() => _remainingSeconds = 0);
-        // TODO: hand off to the camera tracking screen once that flow
-        // exists. UI-only for now.
+        _startTracking();
       } else {
         setState(() => _remainingSeconds--);
       }
@@ -43,6 +36,12 @@ class _ExerciseGuidePageState extends State<ExerciseGuidePage> {
   void _skipCountdown() {
     _timer?.cancel();
     setState(() => _remainingSeconds = 0);
+    _startTracking();
+  }
+
+  void _startTracking() {
+    if (!mounted) return;
+    context.pushReplacement('/exercise/camera', extra: widget.args);
   }
 
   @override
@@ -53,7 +52,7 @@ class _ExerciseGuidePageState extends State<ExerciseGuidePage> {
 
   @override
   Widget build(BuildContext context) {
-    final item = widget.routineItems[_index];
+    final item = widget.args.item;
     final exercise = item.exercise;
     final isRepBased = exercise is RepBasedExercise;
 
@@ -74,11 +73,22 @@ class _ExerciseGuidePageState extends State<ExerciseGuidePage> {
                     child: Text(exercise.name, style: FontTheme.headlineLarge),
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    'Gerakan ${_index + 1} dari ${widget.routineItems.length}',
-                    style: FontTheme.bodySmall.copyWith(
-                      color: BaseColors.textSecondary,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Gerakan ${widget.args.itemIndex + 1} dari ${widget.args.routineItems.length}',
+                        style: FontTheme.bodySmall.copyWith(
+                          color: BaseColors.textSecondary,
+                        ),
+                      ),
+                      Text(
+                        'Set ${widget.args.currentSet} dari ${item.sets}',
+                        style: FontTheme.bodySmall.copyWith(
+                          color: BaseColors.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -60,8 +60,15 @@ class PreExercisePage extends StatelessWidget {
                 width: double.infinity,
                 child: MainButton(
                   label: 'Mulai Latihan',
-                  onPressed: () =>
-                      context.push('/exercise/guide', extra: routineItems),
+                  onPressed: () => context.push(
+                    '/exercise/guide',
+                    extra: ExerciseFlowArgs(
+                      routineItems: routineItems,
+                      itemIndex: 0,
+                      currentSet: 1,
+                      session: ExerciseSessionProgress(),
+                    ),
+                  ),
                 ),
               ),
             ],

@@ -6,7 +6,13 @@ abstract final class EndPoints {
   // Auth
   static const String login = '/api/v1/auth/login';
   static const String logout = '/api/v1/auth/logout';
-  static const String register = '/api/v1/auth/register';
+  static const String registerPatient = '/api/v1/auth/register/patient';
+  static const String registerPhysiotherapist =
+      '/api/v1/auth/register/physiotherapist';
+
+  // Patients
+  static const String patientMe = '/api/v1/patients/me';
+  static const String patientConnect = '/api/v1/patients/connect';
 
   // Catalog
   static const String catalog = '/api/v1/catalog';

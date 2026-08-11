@@ -9,5 +9,6 @@ part 'circular_progress.dart';
 part 'home_shell.dart';
 part 'main_app_bar.dart';
 part 'main_button.dart';
+part 'main_text_field.dart';
 part 'nav_bar.dart';
 part 'stat_tile.dart';

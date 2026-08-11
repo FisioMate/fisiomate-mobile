@@ -10,6 +10,7 @@ dependencies:
   camera: ^0.12.0+2
   circle_nav_bar: ^2.2.0
   dio: ^5.11.0
+  fl_chart: ^1.2.0
   flutter:
     sdk: flutter
   flutter_dotenv: ^6.0.1

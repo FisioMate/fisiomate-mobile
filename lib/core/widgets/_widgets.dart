@@ -10,3 +10,4 @@ part 'home_shell.dart';
 part 'main_app_bar.dart';
 part 'main_button.dart';
 part 'nav_bar.dart';
+part 'stat_tile.dart';

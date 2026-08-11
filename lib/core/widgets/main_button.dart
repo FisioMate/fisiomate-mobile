@@ -1,6 +1,6 @@
 part of '_widgets.dart';
 
-enum ButtonVariant { primary, secondary, error }
+enum ButtonVariant { primary, secondary, error, surface }
 
 enum ButtonStyleType { filled, outlined }
 
@@ -26,6 +26,15 @@ class MainButton extends StatelessWidget {
     ButtonVariant.primary => BaseColors.primary,
     ButtonVariant.secondary => BaseColors.secondary,
     ButtonVariant.error => BaseColors.error,
+    ButtonVariant.surface => BaseColors.surface,
+  };
+
+  // Text/icon color when filled — white on brand/semantic colors, but
+  // dark on the white `surface` variant (used for CTAs sitting on top of
+  // an already-colored card, where white-on-white would be invisible).
+  Color get _onColor => switch (variant) {
+    ButtonVariant.surface => BaseColors.textPrimary,
+    _ => Colors.white,
   };
 
   @override
@@ -52,7 +61,7 @@ class MainButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: _color,
-          foregroundColor: Colors.white,
+          foregroundColor: _onColor,
           disabledBackgroundColor: BaseColors.border,
           disabledForegroundColor: BaseColors.textDisabled,
           elevation: 0,

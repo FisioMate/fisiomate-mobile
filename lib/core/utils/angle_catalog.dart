@@ -66,4 +66,14 @@ const Map<String, AngleDefinition> angleCatalog = {
     mid: PoseLandmarkType.rightShoulder,
     end: PoseLandmarkType.rightHip,
   ),
+  'leftBody': AngleDefinition(
+    start: PoseLandmarkType.leftShoulder,
+    mid: PoseLandmarkType.leftHip,
+    end: PoseLandmarkType.leftAnkle,
+  ),
+  'rightBody': AngleDefinition(
+    start: PoseLandmarkType.rightShoulder,
+    mid: PoseLandmarkType.rightHip,
+    end: PoseLandmarkType.rightAnkle,
+  ),
 };

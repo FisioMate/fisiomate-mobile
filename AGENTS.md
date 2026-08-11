@@ -28,7 +28,7 @@ spike, which was a separate, disposable project).
 - **Freezed** — data models (JSON-serializable) and sealed unions
 - **Hive** — local storage/cache
 - **Dio** — HTTP client
-- **envied** — reads environment config for API endpoints
+- **flutter_dotenv** — reads environment config for API endpoints
 - **go_router** — routing, with a `redirect`-based auth guard (see
   Authentication below)
   **External systems this app talks to (separate repos):**

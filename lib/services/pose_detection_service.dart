@@ -6,8 +6,8 @@ import 'package:camera/camera.dart';
 import 'package:fisiomate/services/logger_service.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 
-// Wraps the device camera + ML Kit pose detector into a single
-// frame -> [Pose] stream.
+/// Wraps the device camera + ML Kit pose detector into a single
+/// frame -> [Pose] stream.
 class PoseDetectionService {
   CameraController? _controller;
   CameraDescription? _camera;

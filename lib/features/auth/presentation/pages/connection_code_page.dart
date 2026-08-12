@@ -42,13 +42,12 @@ class _ConnectionCodePageState extends State<ConnectionCodePage> {
             builder: (context, state) {
               final isLoading = state is ConnectionCodeLoading;
 
-              return Padding(
+              return SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         'Hubungkan dengan Fisioterapis Anda.',

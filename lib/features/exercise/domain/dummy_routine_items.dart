@@ -11,7 +11,7 @@ final List<RoutineItem> dummyRoutineItems = [
     ),
     sets: 1,
     targetRepsOrSeconds: 10,
-    days: [DayOfWeek.senin, DayOfWeek.rabu, DayOfWeek.jumat],
+    days: DayOfWeek.values,
   ),
   RoutineItem(
     id: 'routine-2',
@@ -20,7 +20,7 @@ final List<RoutineItem> dummyRoutineItems = [
     ),
     sets: 1,
     targetRepsOrSeconds: 4,
-    days: [DayOfWeek.senin, DayOfWeek.rabu, DayOfWeek.jumat],
+    days: DayOfWeek.values,
   ),
   RoutineItem(
     id: 'routine-3',
@@ -29,6 +29,6 @@ final List<RoutineItem> dummyRoutineItems = [
     ),
     sets: 1,
     targetRepsOrSeconds: 8,
-    days: [DayOfWeek.senin, DayOfWeek.rabu, DayOfWeek.jumat],
+    days: DayOfWeek.values,
   ),
 ];

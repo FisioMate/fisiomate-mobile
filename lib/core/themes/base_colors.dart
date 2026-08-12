@@ -33,7 +33,8 @@ abstract final class BaseColors {
   static const Color secondary900 = Color(0xFF781701);
   static const Color secondary = secondary500;
 
-  static const Color accent = Color(0xFF000000);
+  static const Color accent = Color(0xFF4F46E5);
+  static const Color accentLight = Color(0xFFEDEBFC);
 
   // Neutrals
   static const Color background = Color(0xFFFDFDFD);
@@ -49,4 +50,5 @@ abstract final class BaseColors {
   static const Color success = Color(0xFF00A552);
   static const Color warning = Color(0xFFFD9A00);
   static const Color error = Color(0xFFF93446);
+  static const Color errorLight = Color(0xFFFDE7E9);
 }

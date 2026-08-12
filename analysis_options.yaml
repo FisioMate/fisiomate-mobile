@@ -1,1 +1,9 @@
 include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    # Freezed's const-factory-constructor pattern applies @JsonKey to the
+    # generated fields at build time, but the analyzer checks the
+    # constructor parameter itself and flags a false positive. Documented
+    # workaround: https://pub.dev/packages/freezed#custom-getters-and-methods
+    invalid_annotation_target: ignore

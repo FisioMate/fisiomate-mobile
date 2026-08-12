@@ -9,13 +9,11 @@ enum DayExerciseStatus { none, scheduled, completed, missed }
 class ExerciseCalendarCard extends StatelessWidget {
   final DateTime month;
   final Map<DateTime, DayExerciseStatus> statusByDate;
-  final ValueChanged<DateTime>? onCompletedDayTap;
 
   const ExerciseCalendarCard({
     super.key,
     required this.month,
     required this.statusByDate,
-    this.onCompletedDayTap,
   });
 
   static const _weekdayLabels = [
@@ -141,11 +139,6 @@ class ExerciseCalendarCard extends StatelessWidget {
                                   date.year == month.year,
                               isToday: DateUtils.isSameDay(date, today),
                               status: _statusFor(date),
-                              onTap:
-                                  _statusFor(date) ==
-                                      DayExerciseStatus.completed
-                                  ? () => onCompletedDayTap?.call(date)
-                                  : null,
                             ),
                           ),
                         )
@@ -156,15 +149,66 @@ class ExerciseCalendarCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          child: Text(
-            textAlign: TextAlign.right,
-            'Klik tanggal yang selesai untuk melihat riwayat sesi',
-            style: FontTheme.bodySmall.copyWith(
-              color: BaseColors.textSecondary,
+        Wrap(
+          spacing: 16,
+          runSpacing: 4,
+          children: [
+            _CalendarLegendItem(
+              background: BaseColors.primary,
+              border: BaseColors.primary,
+              label: 'Hari ini',
             ),
+            _CalendarLegendItem(
+              background: BaseColors.primary50,
+              border: BaseColors.primary,
+              label: 'Selesai',
+            ),
+            _CalendarLegendItem(
+              background: Color(0xFFFFF2DE),
+              border: Color(0xFFAB6904),
+              label: 'Terjadwal',
+            ),
+            _CalendarLegendItem(
+              background: BaseColors.errorLight,
+              border: BaseColors.error,
+              label: 'Terlewat',
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _CalendarLegendItem extends StatelessWidget {
+  final Color background;
+  final Color border;
+  final String label;
+
+  const _CalendarLegendItem({
+    required this.background,
+    required this.border,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(
+            color: background,
+            shape: BoxShape.circle,
+            border: Border.all(color: border, width: 1.5),
           ),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: FontTheme.labelSmall.copyWith(color: BaseColors.textSecondary),
         ),
       ],
     );
@@ -176,14 +220,12 @@ class _CalendarDayCell extends StatelessWidget {
   final bool isCurrentMonth;
   final bool isToday;
   final DayExerciseStatus status;
-  final VoidCallback? onTap;
 
   const _CalendarDayCell({
     required this.date,
     required this.isCurrentMonth,
     required this.isToday,
     required this.status,
-    required this.onTap,
   });
 
   (Color, Color) get _colors {
@@ -208,19 +250,14 @@ class _CalendarDayCell extends StatelessWidget {
       aspectRatio: 1,
       child: Padding(
         padding: const EdgeInsets.all(2),
-        child: Material(
-          color: background,
-          shape: const CircleBorder(),
-          child: InkWell(
-            onTap: onTap,
-            customBorder: const CircleBorder(),
-            child: Center(
-              child: Text(
-                '${date.day}',
-                style: FontTheme.bodyMedium.copyWith(
-                  color: foreground,
-                  fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(color: background, shape: BoxShape.circle),
+          child: Center(
+            child: Text(
+              '${date.day}',
+              style: FontTheme.bodyMedium.copyWith(
+                color: foreground,
+                fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
               ),
             ),
           ),

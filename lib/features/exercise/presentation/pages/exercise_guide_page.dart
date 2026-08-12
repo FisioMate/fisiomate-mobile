@@ -100,6 +100,23 @@ class _ExerciseGuidePageState extends State<ExerciseGuidePage> {
                   width: double.infinity,
                   height: 200,
                   fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      width: double.infinity,
+                      height: 200,
+                      color: BaseColors.border,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                              : null,
+                          color: BaseColors.primary,
+                        ),
+                      ),
+                    );
+                  },
                   errorBuilder: (context, error, stackTrace) => Container(
                     width: double.infinity,
                     height: 200,

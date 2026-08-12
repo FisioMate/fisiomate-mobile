@@ -41,50 +41,61 @@ class HomePage extends StatelessWidget {
     return isScheduled ? DayExerciseStatus.scheduled : DayExerciseStatus.none;
   }
 
+  Future<void> _onRefresh(BuildContext context) {
+    return Future.wait([
+      context.read<CurrentPatientCubit>().fetch(),
+      context.read<RoutineItemsCubit>().fetch(),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MainAppBar(showLogo: true, showNotification: true),
-      body: SizedBox(
-        width: double.infinity,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                BlocBuilder<CurrentPatientCubit, CurrentPatientState>(
-                  builder: (context, state) {
-                    final name = switch (state) {
-                      CurrentPatientLoaded(:final patient) => patient.name,
-                      _ => 'Pasien',
-                    };
-                    return PersonalizedGreeting(
-                      name: name,
-                      quote: "Konsistensi adalah kunci pemulihan Anda.",
-                    );
-                  },
-                ),
-                SizedBox(height: 16),
-                BlocBuilder<RoutineItemsCubit, RoutineItemsState>(
-                  builder: (context, state) {
-                    return switch (state) {
-                      RoutineItemsLoaded(:final items) => _HomeProgress(
-                        routineItems: items,
-                      ),
-                      RoutineItemsFailureState(:final message) =>
-                        _TodaySessionError(
-                          message: message,
-                          onRetry: () =>
-                              context.read<RoutineItemsCubit>().fetch(),
+      body: RefreshIndicator(
+        onRefresh: () => _onRefresh(context),
+        child: SizedBox(
+          width: double.infinity,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  BlocBuilder<CurrentPatientCubit, CurrentPatientState>(
+                    builder: (context, state) {
+                      final name = switch (state) {
+                        CurrentPatientLoaded(:final patient) => patient.name,
+                        _ => 'Pasien',
+                      };
+                      return PersonalizedGreeting(
+                        name: name,
+                        quote: "Konsistensi adalah kunci pemulihan Anda.",
+                      );
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  BlocBuilder<RoutineItemsCubit, RoutineItemsState>(
+                    builder: (context, state) {
+                      return switch (state) {
+                        RoutineItemsLoaded(:final items) => _HomeProgress(
+                          routineItems: items,
                         ),
-                      _ => const _TodaySessionLoading(),
-                    };
-                  },
-                ),
-                SizedBox(height: 24),
-              ],
+                        RoutineItemsFailureState(:final message) =>
+                          _TodaySessionError(
+                            message: message,
+                            onRetry: () =>
+                                context.read<RoutineItemsCubit>().fetch(),
+                          ),
+                        _ => const _TodaySessionLoading(),
+                      };
+                    },
+                  ),
+                  SizedBox(height: 24),
+                ],
+              ),
             ),
           ),
         ),

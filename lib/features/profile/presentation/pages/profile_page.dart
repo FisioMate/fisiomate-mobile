@@ -26,83 +26,90 @@ class ProfilePage extends StatelessWidget {
             _ => null,
           };
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: SizedBox(
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _ProfileHeader(patient: patient),
-                  const SizedBox(height: 24),
-                  BlocBuilder<RoutineItemsCubit, RoutineItemsState>(
-                    builder: (context, state) {
-                      final items = switch (state) {
-                        RoutineItemsLoaded(:final items) => items,
-                        _ => const <RoutineItem>[],
-                      };
-                      final sessions = buildSessionLogs(items);
-                      final stats = computeAllTimeProgressStats(sessions);
-                      final streak = computeCurrentStreak(sessions);
+          return RefreshIndicator(
+            onRefresh: () => Future.wait([
+              context.read<CurrentPatientCubit>().fetch(),
+              context.read<RoutineItemsCubit>().fetch(),
+            ]),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(24),
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _ProfileHeader(patient: patient),
+                    const SizedBox(height: 24),
+                    BlocBuilder<RoutineItemsCubit, RoutineItemsState>(
+                      builder: (context, state) {
+                        final items = switch (state) {
+                          RoutineItemsLoaded(:final items) => items,
+                          _ => const <RoutineItem>[],
+                        };
+                        final sessions = buildSessionLogs(items);
+                        final stats = computeAllTimeProgressStats(sessions);
+                        final streak = computeCurrentStreak(sessions);
 
-                      return Row(
-                        children: [
-                          Expanded(
-                            child: StatTile(
-                              value: '${stats.completed}',
-                              label: 'Sesi Selesai',
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: StatTile(
+                                value: '${stats.completed}',
+                                label: 'Sesi Selesai',
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: StatTile(
-                              value: '${stats.averageAccuracy.round()}%',
-                              label: 'Rata-rata Akurasi',
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: StatTile(
+                                value: '${stats.averageAccuracy.round()}%',
+                                label: 'Rata-rata Akurasi',
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: StatTile(
-                              value: '$streak',
-                              label: 'Hari Beruntun',
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: StatTile(
+                                value: '$streak',
+                                label: 'Hari Beruntun',
+                              ),
                             ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  _PhysiotherapistConnectionCard(patient: patient),
-                  const SizedBox(height: 24),
-                  Text('Pengaturan', style: FontTheme.headlineMedium),
-                  const SizedBox(height: 12),
-                  for (final item in _menuItems) ...[
-                    _ProfileMenuTile(icon: item.icon, label: item.label),
-                    const SizedBox(height: 8),
-                  ],
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: MainButton(
-                      label: 'Logout',
-                      variant: ButtonVariant.error,
-                      styleType: ButtonStyleType.outlined,
-                      onPressed: () async {
-                        await context.read<AuthRepository>().logout();
-                        if (context.mounted) context.go('/auth');
+                          ],
+                        );
                       },
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Center(
-                    child: Text(
-                      'Fisiomate • v0.1.0',
-                      style: FontTheme.bodySmall.copyWith(
-                        color: BaseColors.textDisabled,
+                    const SizedBox(height: 24),
+                    _PhysiotherapistConnectionCard(patient: patient),
+                    const SizedBox(height: 24),
+                    Text('Pengaturan', style: FontTheme.headlineMedium),
+                    const SizedBox(height: 12),
+                    for (final item in _menuItems) ...[
+                      _ProfileMenuTile(icon: item.icon, label: item.label),
+                      const SizedBox(height: 8),
+                    ],
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: MainButton(
+                        label: 'Logout',
+                        variant: ButtonVariant.error,
+                        styleType: ButtonStyleType.outlined,
+                        onPressed: () async {
+                          await context.read<AuthRepository>().logout();
+                          if (context.mounted) context.go('/auth');
+                        },
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 16),
+                    Center(
+                      child: Text(
+                        'Fisiomate • v0.1.0',
+                        style: FontTheme.bodySmall.copyWith(
+                          color: BaseColors.textDisabled,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

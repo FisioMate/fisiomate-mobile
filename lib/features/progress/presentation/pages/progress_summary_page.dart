@@ -1,5 +1,21 @@
 part of '_pages.dart';
 
+enum ProgressRange { all, monthly, weekly }
+
+extension on ProgressRange {
+  String get label => switch (this) {
+    ProgressRange.all => 'Semua',
+    ProgressRange.monthly => 'Bulanan',
+    ProgressRange.weekly => 'Mingguan',
+  };
+
+  String get complianceLabel => switch (this) {
+    ProgressRange.all => 'Kepatuhan',
+    ProgressRange.monthly => 'Kepatuhan Bulanan',
+    ProgressRange.weekly => 'Kepatuhan Mingguan',
+  };
+}
+
 class ProgressSummaryPage extends StatefulWidget {
   const ProgressSummaryPage({super.key});
 
@@ -12,7 +28,7 @@ class _ProgressSummaryPageState extends State<ProgressSummaryPage> {
   String _query = '';
 
   List<SessionLog> get _recentSessions {
-    final sorted = [..._dummySessionLogs]
+    final sorted = [...dummySessionLogs]
       ..sort((a, b) => b.date.compareTo(a.date));
     final filtered = _query.isEmpty
         ? sorted
@@ -26,41 +42,11 @@ class _ProgressSummaryPageState extends State<ProgressSummaryPage> {
     return filtered.take(4).toList();
   }
 
-  ({
-    double compliancePercent,
-    int completed,
-    int total,
-    List<double> accuracyTrend,
-  })
-  _statsFor(ProgressRange range) {
-    final now = DateTime.now();
-    final sessions = switch (range) {
-      ProgressRange.all => _dummySessionLogs,
-      ProgressRange.monthly => _dummySessionLogs.where(
-        (session) =>
-            session.date.year == now.year && session.date.month == now.month,
-      ),
-      ProgressRange.weekly => _dummySessionLogs.where(
-        (session) => now.difference(session.date).inDays <= 7,
-      ),
-    }.toList()..sort((a, b) => a.date.compareTo(b.date));
-
-    final completed = sessions
-        .where((session) => session.status == SessionLogStatus.completed)
-        .length;
-    final total = sessions.length;
-    final accuracyTrend = sessions
-        .where((session) => session.accuracy != null)
-        .map((session) => session.accuracy!)
-        .toList();
-
-    return (
-      compliancePercent: total == 0 ? 0 : (completed / total) * 100,
-      completed: completed,
-      total: total,
-      accuracyTrend: accuracyTrend,
-    );
-  }
+  ProgressStats _statsFor(ProgressRange range) => switch (range) {
+    ProgressRange.all => computeAllTimeProgressStats(dummySessionLogs),
+    ProgressRange.monthly => computeMonthlyProgressStats(dummySessionLogs),
+    ProgressRange.weekly => computeWeeklyProgressStats(dummySessionLogs),
+  };
 
   @override
   Widget build(BuildContext context) {

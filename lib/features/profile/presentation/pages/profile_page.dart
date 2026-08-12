@@ -19,6 +19,9 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final stats = computeAllTimeProgressStats(dummySessionLogs);
+    final streak = computeCurrentStreak(dummySessionLogs);
+
     return Scaffold(
       appBar: MainAppBar(label: 'Profil', showNotification: true),
       body: SingleChildScrollView(
@@ -76,15 +79,21 @@ class ProfilePage extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: StatTile(value: '24', label: 'Sesi Selesai'),
+                    child: StatTile(
+                      value: '${stats.completed}',
+                      label: 'Sesi Selesai',
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: StatTile(value: '82%', label: 'Rata-rata Akurasi'),
+                    child: StatTile(
+                      value: '${stats.averageAccuracy.round()}%',
+                      label: 'Rata-rata Akurasi',
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: StatTile(value: '6', label: 'Hari Beruntun'),
+                    child: StatTile(value: '$streak', label: 'Hari Beruntun'),
                   ),
                 ],
               ),

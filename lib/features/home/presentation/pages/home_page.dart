@@ -5,55 +5,50 @@ class HomePage extends StatelessWidget {
 
   static const String _dummyPatientName = 'Zika';
 
-  // TODO: replace with real data once ExerciseRepository is wired up.
-  static final Map<DateTime, DayExerciseStatus> _dummyExerciseStatus = {
-    for (final day in [1, 6, 9, 14, 17, 20, 21])
-      DateTime(2026, 8, day): DayExerciseStatus.scheduled,
-    for (final day in [2, 3, 4, 5, 7, 8, 10, 11, 12, 13, 15, 16, 18, 19, 22])
-      DateTime(2026, 8, day): DayExerciseStatus.completed,
-  };
+  /// Merges this month's actual session log (completed/missed) with the
+  /// weekly routine schedule (scheduled) so the calendar's numbers stay
+  /// consistent with the Progress and Profile screens instead of being a
+  /// separately hardcoded month.
+  static Map<DateTime, DayExerciseStatus> _calendarStatusFor(DateTime month) {
+    final logsByDate = {
+      for (final log in dummySessionLogs)
+        DateTime(log.date.year, log.date.month, log.date.day): log,
+    };
+    final daysInMonth = DateUtils.getDaysInMonth(month.year, month.month);
 
-  // TODO: replace with real data once ProgressRepository is wired up.
-  static const List<double> _dummyDailyAccuracy = [
-    0,
-    25,
-    40,
-    48,
-    52,
-    53,
-    58,
-    62,
-    63,
-    60,
-    58,
-    55,
-    59,
-    58,
-    62,
-    70,
-    75,
-    78,
-    79,
-    75,
-    68,
-    64,
-    70,
-    78,
-    82,
-    85,
-    88,
-    90,
-    91,
-    90,
-    92,
-  ];
+    return {
+      for (var day = 1; day <= daysInMonth; day++)
+        DateTime(month.year, month.month, day): _statusForDay(
+          DateTime(month.year, month.month, day),
+          logsByDate,
+        ),
+    };
+  }
+
+  static DayExerciseStatus _statusForDay(
+    DateTime date,
+    Map<DateTime, SessionLog> logsByDate,
+  ) {
+    final log = logsByDate[date];
+    if (log != null) {
+      return log.status == SessionLogStatus.completed
+          ? DayExerciseStatus.completed
+          : DayExerciseStatus.missed;
+    }
+
+    final isScheduled = dummyRoutineItems.any(
+      (item) => item.days.contains(DayOfWeek.fromDate(date)),
+    );
+    return isScheduled ? DayExerciseStatus.scheduled : DayExerciseStatus.none;
+  }
 
   @override
   Widget build(BuildContext context) {
-    // ! Demo only routine mapper
+    final now = DateTime.now();
     final todaysRoutineItems = dummyRoutineItems
-        .where((item) => item.days.contains(DayOfWeek.fromDate(DateTime.now())))
+        .where((item) => item.days.contains(DayOfWeek.fromDate(now)))
         .toList();
+    final monthlyStats = computeMonthlyProgressStats(dummySessionLogs);
 
     return Scaffold(
       appBar: MainAppBar(showLogo: true, showNotification: true),
@@ -81,16 +76,16 @@ class HomePage extends StatelessWidget {
                 ),
                 SizedBox(height: 48),
                 ExerciseCalendarCard(
-                  month: DateTime(2026, 8),
-                  statusByDate: _dummyExerciseStatus,
+                  month: DateTime(now.year, now.month),
+                  statusByDate: _calendarStatusFor(now),
                 ),
                 SizedBox(height: 48),
                 MonthlyProgressSection(
-                  dailyAccuracy: _dummyDailyAccuracy,
-                  compliancePercent: 62,
-                  accuracyPercent: 82,
-                  completedSessions: 15,
-                  totalSessions: 29,
+                  dailyAccuracy: monthlyStats.accuracyTrend,
+                  compliancePercent: monthlyStats.compliancePercent,
+                  accuracyPercent: monthlyStats.averageAccuracy,
+                  completedSessions: monthlyStats.completed,
+                  totalSessions: monthlyStats.total,
                 ),
                 SizedBox(height: 24),
               ],

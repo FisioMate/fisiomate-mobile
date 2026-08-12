@@ -3,6 +3,9 @@ import 'package:fisiomate/features/exercise/domain/dummy_routine_items.dart';
 import 'package:fisiomate/features/exercise/domain/entities/day_of_week.dart';
 import 'package:fisiomate/features/exercise/domain/routine_duration_estimator.dart';
 import 'package:fisiomate/features/home/presentation/widgets/_widgets.dart';
+import 'package:fisiomate/features/progress/domain/dummy_session_logs.dart';
+import 'package:fisiomate/features/progress/domain/entities/session_log.dart';
+import 'package:fisiomate/features/progress/domain/progress_stats.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

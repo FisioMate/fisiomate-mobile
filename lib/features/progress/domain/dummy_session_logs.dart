@@ -1,35 +1,16 @@
-part of '_pages.dart';
+import 'dart:math';
 
-enum ProgressRange { all, monthly, weekly }
-
-extension on ProgressRange {
-  String get label => switch (this) {
-    ProgressRange.all => 'Semua',
-    ProgressRange.monthly => 'Bulanan',
-    ProgressRange.weekly => 'Mingguan',
-  };
-
-  String get complianceLabel => switch (this) {
-    ProgressRange.all => 'Kepatuhan',
-    ProgressRange.monthly => 'Kepatuhan Bulanan',
-    ProgressRange.weekly => 'Kepatuhan Mingguan',
-  };
-}
-
-enum SessionFilter { all, thisWeek, thisMonth }
-
-extension on SessionFilter {
-  String get label => switch (this) {
-    SessionFilter.all => 'Semua Sesi',
-    SessionFilter.thisWeek => 'Minggu Ini',
-    SessionFilter.thisMonth => 'Bulan Ini',
-  };
-}
+import 'package:fisiomate/features/progress/domain/entities/session_log.dart';
 
 // TODO: replace with real data fetched from the backend's full exercise
 // log once that endpoint exists — filtering/searching/aggregation stays
 // client-side either way, only the data source swaps out.
-final List<SessionLog> _dummySessionLogs = _generateDummySessionLogs();
+//
+// Single source of truth for progress dummy data — the Progress feature,
+// the home screen's calendar/monthly summary, and the profile screen's
+// stat tiles all derive their numbers from this same list so they never
+// drift out of sync with each other.
+final List<SessionLog> dummySessionLogs = _generateDummySessionLogs();
 
 /// ~30 days of history ending today, skipping Sundays (rest day in the
 /// prescribed program, so no log entry at all — not "missed"). Fixed

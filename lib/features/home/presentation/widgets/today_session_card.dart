@@ -15,6 +15,8 @@ class TodaySessionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasExercise = exerciseCount > 0;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
@@ -30,23 +32,41 @@ class TodaySessionCard extends StatelessWidget {
             style: FontTheme.bodyLarge.copyWith(color: Colors.white),
           ),
           const SizedBox(height: 4),
-          Text(
-            '$exerciseCount Latihan Menunggu • $totalMinutes menit',
-            style: FontTheme.headlineMedium.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
+          if (hasExercise) ...[
+            Text(
+              '$exerciseCount Latihan Menunggu • $totalMinutes menit',
+              style: FontTheme.headlineMedium.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: MainButton(
-              label: 'Mulai sesi hari ini',
-              variant: ButtonVariant.surface,
-              rightIcon: const Icon(Icons.arrow_forward_rounded),
-              onPressed: onStartSession,
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: MainButton(
+                label: 'Mulai sesi hari ini',
+                variant: ButtonVariant.surface,
+                rightIcon: const Icon(Icons.arrow_forward_rounded),
+                onPressed: onStartSession,
+              ),
             ),
-          ),
+          ] else
+            Row(
+              children: [
+                const Icon(Icons.self_improvement, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Tidak ada latihan hari ini. Nikmati hari istirahat Anda!',
+                    style: FontTheme.titleMedium.copyWith(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );

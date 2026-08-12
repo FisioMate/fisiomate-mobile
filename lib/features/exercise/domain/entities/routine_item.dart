@@ -1,10 +1,12 @@
 import 'package:fisiomate/features/exercise/domain/entities/day_of_week.dart';
 import 'package:fisiomate/features/exercise/domain/entities/exercise.dart';
+import 'package:fisiomate/features/exercise/domain/entities/exercise_log.dart';
 
-/// Mirrors the backend's `ExerciseRead` — a catalog [Exercise] plus the
-/// per-patient prescription (sets, target reps or seconds, scheduled
-/// days). Kept separate from [Exercise] itself since the catalog item
-/// doesn't change per patient, but this does.
+/// Mirrors the backend's `ExerciseWithLogsRead` — a catalog [Exercise]
+/// plus the per-patient prescription (sets, target reps or seconds,
+/// scheduled days) and its completion history. Kept separate from
+/// [Exercise] itself since the catalog item doesn't change per patient,
+/// but this does.
 class RoutineItem {
   final String id;
   final Exercise exercise;
@@ -20,11 +22,17 @@ class RoutineItem {
   /// home page's day filter).
   final List<DayOfWeek> days;
 
+  /// Completion history for this exercise — the Progress feature derives
+  /// its session history/stats from these instead of a separate
+  /// "session" concept, since the backend doesn't have one.
+  final List<ExerciseLog> logs;
+
   const RoutineItem({
     required this.id,
     required this.exercise,
     required this.sets,
     required this.targetRepsOrSeconds,
     required this.days,
+    this.logs = const [],
   });
 }

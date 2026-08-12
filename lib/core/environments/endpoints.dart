@@ -20,6 +20,8 @@ abstract final class EndPoints {
   // Exercises (patient HEP)
   static const String exercises = '/api/v1/exercises';
   static String exerciseById(String hepId) => '/api/v1/exercises/$hepId';
+  static const String exerciseSessionsComplete =
+      '/api/v1/exercises/sessions/complete';
 
   // Exercise requests
   static const String exerciseRequests = '/api/v1/exercise/requests';

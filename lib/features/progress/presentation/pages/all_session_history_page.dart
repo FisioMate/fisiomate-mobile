@@ -1,7 +1,19 @@
 part of '_pages.dart';
 
+enum SessionFilter { all, thisWeek, thisMonth }
+
+extension on SessionFilter {
+  String get label => switch (this) {
+    SessionFilter.all => 'Semua Sesi',
+    SessionFilter.thisWeek => 'Minggu Ini',
+    SessionFilter.thisMonth => 'Bulan Ini',
+  };
+}
+
 class AllSessionHistoryPage extends StatefulWidget {
-  const AllSessionHistoryPage({super.key});
+  final List<RoutineItem> routineItems;
+
+  const AllSessionHistoryPage({super.key, required this.routineItems});
 
   @override
   State<AllSessionHistoryPage> createState() => _AllSessionHistoryPageState();
@@ -13,9 +25,8 @@ class _AllSessionHistoryPageState extends State<AllSessionHistoryPage> {
 
   List<SessionLog> get _filteredSessions {
     final now = DateTime.now();
-    var sessions = [..._dummySessionLogs]..sort(
-      (a, b) => b.date.compareTo(a.date),
-    );
+    var sessions = buildSessionLogs(widget.routineItems)
+      ..sort((a, b) => b.date.compareTo(a.date));
 
     sessions = switch (_filter) {
       SessionFilter.all => sessions,

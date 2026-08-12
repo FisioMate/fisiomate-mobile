@@ -35,25 +35,41 @@ class ProfilePage extends StatelessWidget {
                 children: [
                   _ProfileHeader(patient: patient),
                   const SizedBox(height: 24),
-                  // TODO: replace with real data once ProgressRepository is
-                  // wired up.
-                  Row(
-                    children: [
-                      Expanded(
-                        child: StatTile(value: '24', label: 'Sesi Selesai'),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: StatTile(
-                          value: '82%',
-                          label: 'Rata-rata Akurasi',
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: StatTile(value: '6', label: 'Hari Beruntun'),
-                      ),
-                    ],
+                  BlocBuilder<RoutineItemsCubit, RoutineItemsState>(
+                    builder: (context, state) {
+                      final items = switch (state) {
+                        RoutineItemsLoaded(:final items) => items,
+                        _ => const <RoutineItem>[],
+                      };
+                      final sessions = buildSessionLogs(items);
+                      final stats = computeAllTimeProgressStats(sessions);
+                      final streak = computeCurrentStreak(sessions);
+
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: StatTile(
+                              value: '${stats.completed}',
+                              label: 'Sesi Selesai',
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: StatTile(
+                              value: '${stats.averageAccuracy.round()}%',
+                              label: 'Rata-rata Akurasi',
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: StatTile(
+                              value: '$streak',
+                              label: 'Hari Beruntun',
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   const SizedBox(height: 24),
                   _PhysiotherapistConnectionCard(patient: patient),

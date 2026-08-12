@@ -114,7 +114,7 @@ class _CameraViewPageState extends State<CameraViewPage> {
         _repTracker?.totalTime ?? _durationTracker?.totalTime ?? Duration.zero;
     final validTime =
         _repTracker?.validTime ?? _durationTracker?.validTime ?? Duration.zero;
-    widget.args.session.addFrame(totalTime, validTime);
+    widget.args.session.addFrame(_item.id, totalTime, validTime);
   }
 
   void _advance() {

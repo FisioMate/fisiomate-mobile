@@ -1,9 +1,39 @@
 part of '_pages.dart';
 
-class ExerciseResultPage extends StatelessWidget {
+class ExerciseResultPage extends StatefulWidget {
   final ExerciseSessionProgress session;
 
   const ExerciseResultPage({super.key, required this.session});
+
+  @override
+  State<ExerciseResultPage> createState() => _ExerciseResultPageState();
+}
+
+class _ExerciseResultPageState extends State<ExerciseResultPage> {
+  bool _isSubmitting = false;
+
+  Future<void> _submit() async {
+    setState(() => _isSubmitting = true);
+    final repository = context.read<ExerciseRepository>();
+    try {
+      // One log per exercise — the backend tracks logs per exercise, not
+      // per whole-routine session (see ExerciseSessionProgress).
+      for (final summary in widget.session.perExerciseSummaries) {
+        await repository.completeExerciseSession(
+          exerciseId: summary.exerciseId,
+          activeDuration: summary.activeDuration,
+          accuracyScore: summary.accuracyPercent,
+        );
+      }
+      if (mounted) context.go('/');
+    } on Failure catch (failure) {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(failure.message)));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,14 +68,14 @@ class ExerciseResultPage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: StatTile(
-                      value: "${session.totalActiveMinutes}'",
+                      value: "${widget.session.totalActiveMinutes}'",
                       label: 'Total waktu (menit) pelaksanaan aktif',
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: StatTile(
-                      value: '${session.accuracyPercent.round()}%',
+                      value: '${widget.session.accuracyPercent.round()}%',
                       label: 'Skor Akurasi Gerakan Keseluruhan',
                     ),
                   ),
@@ -55,11 +85,8 @@ class ExerciseResultPage extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: MainButton(
-                  label: 'Kirim Sesi & Selesai',
-                  // TODO: wire to a session-submission endpoint once the
-                  // backend exposes one (not in openapi.json yet) —
-                  // returns to home for now.
-                  onPressed: () => context.go('/'),
+                  label: _isSubmitting ? 'Mengirim...' : 'Kirim Sesi & Selesai',
+                  onPressed: _isSubmitting ? null : _submit,
                 ),
               ),
             ],

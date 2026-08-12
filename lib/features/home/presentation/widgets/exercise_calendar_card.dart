@@ -1,6 +1,6 @@
 part of '_widgets.dart';
 
-enum DayExerciseStatus { none, scheduled, completed }
+enum DayExerciseStatus { none, scheduled, completed, missed }
 
 /// Monthly calendar — header ("Agustus 2026" + "x/y Selesai"), then a
 /// card with a Monday-first day grid colored by [DayExerciseStatus].
@@ -195,6 +195,7 @@ class _CalendarDayCell extends StatelessWidget {
     return switch (status) {
       DayExerciseStatus.completed => (BaseColors.primary50, BaseColors.primary),
       DayExerciseStatus.scheduled => (Color(0xFFFFF2DE), Color(0xFFAB6904)),
+      DayExerciseStatus.missed => (BaseColors.errorLight, BaseColors.error),
       DayExerciseStatus.none => (Colors.transparent, BaseColors.textPrimary),
     };
   }

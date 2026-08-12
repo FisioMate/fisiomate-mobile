@@ -5,6 +5,8 @@ import 'package:fisiomate/features/auth/presentation/pages/_pages.dart';
 import 'package:fisiomate/features/chat/presentation/pages/_pages.dart';
 import 'package:fisiomate/features/exercise/domain/entities/routine_item.dart';
 import 'package:fisiomate/features/exercise/domain/exercise_session_progress.dart';
+import 'package:fisiomate/features/exercise/domain/repositories/_repositories.dart';
+import 'package:fisiomate/features/exercise/presentation/cubit/_cubits.dart';
 import 'package:fisiomate/features/exercise/presentation/pages/_pages.dart';
 import 'package:fisiomate/features/home/presentation/pages/_pages.dart';
 import 'package:fisiomate/features/profile/presentation/pages/_pages.dart';
@@ -46,7 +48,9 @@ final router = GoRouter(
     // don't show the bottom nav bar.
     GoRoute(
       path: "/progress/history",
-      builder: (context, state) => const AllSessionHistoryPage(),
+      builder: (context, state) => AllSessionHistoryPage(
+        routineItems: state.extra as List<RoutineItem>,
+      ),
     ),
     GoRoute(
       path: "/exercise",
@@ -72,10 +76,19 @@ final router = GoRouter(
 
     /* ---------------------------- Home Shell Pages ---------------------------- */
     ShellRoute(
-      builder: (context, state, child) => BlocProvider(
-        create: (context) =>
-            CurrentPatientCubit(repository: context.read<AuthRepository>())
-              ..fetch(),
+      builder: (context, state, child) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) =>
+                CurrentPatientCubit(repository: context.read<AuthRepository>())
+                  ..fetch(),
+          ),
+          BlocProvider(
+            create: (context) => RoutineItemsCubit(
+              repository: context.read<ExerciseRepository>(),
+            )..fetch(),
+          ),
+        ],
         child: HomeShell(child: child),
       ),
       routes: [

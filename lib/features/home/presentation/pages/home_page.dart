@@ -3,59 +3,46 @@ part of '_pages.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  // TODO: replace with real data once ExerciseRepository is wired up.
-  static final Map<DateTime, DayExerciseStatus> _dummyExerciseStatus = {
-    for (final day in [1, 6, 9, 14, 17, 20, 21])
-      DateTime(2026, 8, day): DayExerciseStatus.scheduled,
-    for (final day in [2, 3, 4, 5, 7, 8, 10, 11, 12, 13, 15, 16, 18, 19, 22])
-      DateTime(2026, 8, day): DayExerciseStatus.completed,
-  };
+  static Map<DateTime, DayExerciseStatus> _calendarStatusFor(
+    DateTime month,
+    List<RoutineItem> routineItems,
+  ) {
+    final sessionsByDate = {
+      for (final session in buildSessionLogs(routineItems))
+        session.date: session.status,
+    };
+    final daysInMonth = DateUtils.getDaysInMonth(month.year, month.month);
 
-  // TODO: replace with real data once ProgressRepository is wired up.
-  static const List<double> _dummyDailyAccuracy = [
-    0,
-    25,
-    40,
-    48,
-    52,
-    53,
-    58,
-    62,
-    63,
-    60,
-    58,
-    55,
-    59,
-    58,
-    62,
-    70,
-    75,
-    78,
-    79,
-    75,
-    68,
-    64,
-    70,
-    78,
-    82,
-    85,
-    88,
-    90,
-    91,
-    90,
-    92,
-  ];
+    return {
+      for (var day = 1; day <= daysInMonth; day++)
+        DateTime(month.year, month.month, day): _statusForDay(
+          DateTime(month.year, month.month, day),
+          sessionsByDate,
+          routineItems,
+        ),
+    };
+  }
+
+  static DayExerciseStatus _statusForDay(
+    DateTime date,
+    Map<DateTime, SessionLogStatus> sessionsByDate,
+    List<RoutineItem> routineItems,
+  ) {
+    final status = sessionsByDate[date];
+    if (status != null) {
+      return status == SessionLogStatus.completed
+          ? DayExerciseStatus.completed
+          : DayExerciseStatus.missed;
+    }
+
+    final isScheduled = routineItems.any(
+      (item) => item.days.contains(DayOfWeek.fromDate(date)),
+    );
+    return isScheduled ? DayExerciseStatus.scheduled : DayExerciseStatus.none;
+  }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: replace with ExerciseRepository/GET /exercises once wired up —
-    // the backend only stores each routine item's schedule, so figuring
-    // out "today's" items from that schedule is frontend work regardless
-    // of whether the source is dummy or real.
-    final todaysRoutineItems = dummyRoutineItems
-        .where((item) => item.days.contains(DayOfWeek.fromDate(DateTime.now())))
-        .toList();
-
     return Scaffold(
       appBar: MainAppBar(showLogo: true, showNotification: true),
       body: SizedBox(
@@ -80,32 +67,133 @@ class HomePage extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 16),
-                TodaySessionCard(
-                  exerciseCount: todaysRoutineItems.length,
-                  totalMinutes: estimateRoutineDurationMinutes(
-                    todaysRoutineItems,
-                  ),
-                  onStartSession: () =>
-                      context.push('/exercise', extra: todaysRoutineItems),
-                ),
-                SizedBox(height: 48),
-                ExerciseCalendarCard(
-                  month: DateTime(2026, 8),
-                  statusByDate: _dummyExerciseStatus,
-                ),
-                SizedBox(height: 48),
-                MonthlyProgressSection(
-                  dailyAccuracy: _dummyDailyAccuracy,
-                  compliancePercent: 62,
-                  accuracyPercent: 82,
-                  completedSessions: 15,
-                  totalSessions: 29,
+                BlocBuilder<RoutineItemsCubit, RoutineItemsState>(
+                  builder: (context, state) {
+                    return switch (state) {
+                      RoutineItemsLoaded(:final items) => _HomeProgress(
+                        routineItems: items,
+                      ),
+                      RoutineItemsFailureState(:final message) =>
+                        _TodaySessionError(
+                          message: message,
+                          onRetry: () =>
+                              context.read<RoutineItemsCubit>().fetch(),
+                        ),
+                      _ => const _TodaySessionLoading(),
+                    };
+                  },
                 ),
                 SizedBox(height: 24),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _HomeProgress extends StatelessWidget {
+  final List<RoutineItem> routineItems;
+
+  const _HomeProgress({required this.routineItems});
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final todaysRoutineItems = routineItems
+        .where((item) => item.days.contains(DayOfWeek.fromDate(now)))
+        .toList();
+    final sessions = buildSessionLogs(routineItems);
+    final monthlyStats = computeMonthlyProgressStats(sessions);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        TodaySessionCard(
+          exerciseCount: todaysRoutineItems.length,
+          totalMinutes: estimateRoutineDurationMinutes(todaysRoutineItems),
+          onStartSession: () =>
+              context.push('/exercise', extra: todaysRoutineItems),
+        ),
+        SizedBox(height: 48),
+        ExerciseCalendarCard(
+          month: DateTime(now.year, now.month),
+          statusByDate: HomePage._calendarStatusFor(
+            DateTime(now.year, now.month),
+            routineItems,
+          ),
+        ),
+        SizedBox(height: 48),
+        MonthlyProgressSection(
+          dailyAccuracy: monthlyStats.accuracyTrend,
+          compliancePercent: monthlyStats.compliancePercent,
+          accuracyPercent: monthlyStats.averageAccuracy,
+          completedSessions: monthlyStats.completed,
+          totalSessions: monthlyStats.total,
+        ),
+      ],
+    );
+  }
+}
+
+class _TodaySessionLoading extends StatelessWidget {
+  const _TodaySessionLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 40),
+      decoration: BoxDecoration(
+        color: BaseColors.primary50,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Center(
+        child: CircularProgressIndicator(color: BaseColors.primary),
+      ),
+    );
+  }
+}
+
+class _TodaySessionError extends StatelessWidget {
+  final String message;
+  final VoidCallback onRetry;
+
+  const _TodaySessionError({required this.message, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: BaseColors.errorLight,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Gagal memuat data latihan',
+            style: FontTheme.titleMedium.copyWith(
+              color: BaseColors.error,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            message,
+            style: FontTheme.bodySmall.copyWith(color: BaseColors.error),
+          ),
+          const SizedBox(height: 12),
+          MainButton(
+            label: 'Coba Lagi',
+            variant: ButtonVariant.error,
+            styleType: ButtonStyleType.outlined,
+            onPressed: onRetry,
+          ),
+        ],
       ),
     );
   }

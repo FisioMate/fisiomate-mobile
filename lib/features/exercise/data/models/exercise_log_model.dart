@@ -26,7 +26,11 @@ class ExerciseLogModel {
       completedReps: json['completed_reps'] as int?,
       completedSets: json['completed_sets'] as int?,
       accuracyScore: (json['accuracy_score'] as num).toDouble(),
-      completedAt: DateTime.parse(json['completed_at'] as String),
+      // .toLocal() matters here — this gets bucketed by calendar date
+      // (session_log_builder.dart) to build the Progress/calendar UI, so
+      // an unconverted UTC timestamp can land on the wrong local day
+      // (e.g. a late-night completion in WIB reads as "yesterday" UTC).
+      completedAt: DateTime.parse(json['completed_at'] as String).toLocal(),
     );
   }
 

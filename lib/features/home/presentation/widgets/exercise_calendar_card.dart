@@ -156,7 +156,7 @@ class ExerciseCalendarCard extends StatelessWidget {
             _CalendarLegendItem(
               background: BaseColors.primary,
               border: BaseColors.primary,
-              label: 'Hari ini',
+              label: 'Hari Ini',
             ),
             _CalendarLegendItem(
               background: BaseColors.primary50,

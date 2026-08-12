@@ -11,11 +11,12 @@ import 'package:fisiomate/features/progress/domain/entities/session_log.dart';
 /// A day becomes a [SessionLog] if either:
 /// - it has at least one log (status `completed`, `accuracy` = that
 ///   day's average `accuracyScore`), or
-/// - it's in the past and at least one [RoutineItem] was scheduled for
-///   that weekday but has no log for it (status `missed`).
+/// - it's strictly in the past and at least one [RoutineItem] was
+///   scheduled for that weekday but has no log for it (status `missed`).
 ///
-/// Days with nothing scheduled and nothing logged are omitted entirely
-/// (never happened, not part of the program).
+/// Today is never marked `missed` even if nothing's logged yet — the day
+/// isn't over. Days with nothing scheduled and nothing logged are
+/// omitted entirely (never happened, not part of the program).
 List<SessionLog> buildSessionLogs(List<RoutineItem> routineItems) {
   final today = DateTime.now();
   final todayDate = DateTime(today.year, today.month, today.day);
@@ -72,6 +73,10 @@ List<SessionLog> buildSessionLogs(List<RoutineItem> routineItems) {
       );
       continue;
     }
+
+    // Today isn't over yet — no log doesn't mean missed, there's still
+    // time left to do it. Just omit today from the history entirely.
+    if (date.isAtSameMomentAs(todayDate)) continue;
 
     final scheduledCount = routineItems
         .where((item) => item.days.contains(DayOfWeek.fromDate(date)))

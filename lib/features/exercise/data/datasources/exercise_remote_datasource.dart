@@ -18,11 +18,27 @@ class ExerciseRemoteDatasourceImpl implements ExerciseRemoteDatasource {
 
   ExerciseRemoteDatasourceImpl({required this.client});
 
+  // Simple cache fallback — if the network call fails (offline, backend
+  // down), fall back to the last successful response instead of leaving
+  // the screen blank. No expiry/invalidation: always prefer network,
+  // cache is a last resort. Shares its cache entry with
+  // AuthRemoteDatasource.getCurrentPatient — both hit `GET /patients/me`.
   @override
   Future<List<RoutineItemModel>> getRoutineItems() async {
-    final response = await client.get(EndPoints.patientMe);
-    final data = response.data as Map<String, dynamic>;
-    final exercises = data['exercises'] as List<dynamic>? ?? [];
+    try {
+      final response = await client.get(EndPoints.patientMe);
+      final data = response.data as Map<String, dynamic>;
+      await HiveService.cacheBox.put(EndPoints.patientMe, jsonEncode(data));
+      return _parseExercises(data);
+    } on Failure {
+      final cached = HiveService.cacheBox.get(EndPoints.patientMe) as String?;
+      if (cached == null) rethrow;
+      return _parseExercises(jsonDecode(cached) as Map<String, dynamic>);
+    }
+  }
+
+  List<RoutineItemModel> _parseExercises(Map<String, dynamic> patientData) {
+    final exercises = patientData['exercises'] as List<dynamic>? ?? [];
     return exercises
         .map((item) => RoutineItemModel.fromJson(item as Map<String, dynamic>))
         .toList();

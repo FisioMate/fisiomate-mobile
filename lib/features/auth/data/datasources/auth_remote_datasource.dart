@@ -54,10 +54,22 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     return client.post(EndPoints.logout);
   }
 
+  // Simple cache fallback — if the network call fails (offline, backend
+  // down), fall back to the last successful response instead of leaving
+  // the screen blank. No expiry/invalidation: always prefer network,
+  // cache is a last resort.
   @override
   Future<PatientModel> getCurrentPatient() async {
-    final response = await client.get(EndPoints.patientMe);
-    return PatientModel.fromJson(response.data as Map<String, dynamic>);
+    try {
+      final response = await client.get(EndPoints.patientMe);
+      final data = response.data as Map<String, dynamic>;
+      await HiveService.cacheBox.put(EndPoints.patientMe, jsonEncode(data));
+      return PatientModel.fromJson(data);
+    } on Failure {
+      final cached = HiveService.cacheBox.get(EndPoints.patientMe) as String?;
+      if (cached == null) rethrow;
+      return PatientModel.fromJson(jsonDecode(cached) as Map<String, dynamic>);
+    }
   }
 
   @override

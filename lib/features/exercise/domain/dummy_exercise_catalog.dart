@@ -20,9 +20,10 @@ const List<Exercise> dummyExerciseCatalog = [
     description:
         'Berdiri tegak, kaki selebar bahu, tekuk lutut perlahan hingga '
         '90°, lalu diri kembali ke posisi awal.',
-    iconUrl: 'https://placehold.co/96x96/008372/FFFFFF?text=Squat',
+    iconUrl:
+        'https://minio.jocimsus.tech/lefi-calon-presiden-ristek/catalog/ccdfbdcf-1b83-48fb-a1fa-9a8b86d2cf3d.png',
     fullImageUrl:
-        'https://placehold.co/600x400/EAFCF7/006F5E?text=Squat+Lutut+Ringan',
+        'https://minio.jocimsus.tech/lefi-calon-presiden-ristek/catalog/cbd956e1-8f34-4dab-9c0c-e5c2415de4ad.jpg',
     requiredLandmarks: [
       'leftHip',
       'leftKnee',
@@ -200,9 +201,10 @@ const List<Exercise> dummyExerciseCatalog = [
     description:
         'Berdiri tegak, angkat kedua lengan ke samping hingga sejajar '
         'bahu, luruskan siku, lalu tahan pada posisi tersebut.',
-    iconUrl: 'https://placehold.co/96x96/008372/FFFFFF?text=Bahu',
+    iconUrl:
+        'https://minio.jocimsus.tech/lefi-calon-presiden-ristek/catalog/333f336f-7380-4c7c-a52d-259b31b1a8af.png',
     fullImageUrl:
-        'https://placehold.co/600x400/EAFCF7/006F5E?text=Peregangan+Bahu',
+        'https://minio.jocimsus.tech/lefi-calon-presiden-ristek/catalog/e5b47a02-c4a9-43d1-a555-45378d68d6f8.jpg',
     requiredLandmarks: [
       'leftHip',
       'leftShoulder',
@@ -253,13 +255,14 @@ const List<Exercise> dummyExerciseCatalog = [
   // trustworthy until validated on-device.
   RepBasedExercise(
     id: 'standing-leg-swing',
-    name: 'Ayunan Tungkai Berdiri',
+    name: 'Standing Leg Swing',
     description:
         'Berdiri tegak berpegangan pada kursi/dinding bila perlu, ayunkan '
         'tungkai kanan ke depan lalu kembali ke posisi netral.',
-    iconUrl: 'https://placehold.co/96x96/008372/FFFFFF?text=Ayunan',
+    iconUrl:
+        'https://minio.jocimsus.tech/lefi-calon-presiden-ristek/catalog/82b7337b-53ff-4d3b-a140-a61b1b4de11b.png',
     fullImageUrl:
-        'https://placehold.co/600x400/EAFCF7/006F5E?text=Ayunan+Tungkai',
+        'https://minio.jocimsus.tech/lefi-calon-presiden-ristek/catalog/81190ef5-bbab-4945-8062-1dcfed9f4cdc.jpg',
     requiredLandmarks: ['rightShoulder', 'rightHip', 'rightKnee'],
     upRules: [
       AngleRule(

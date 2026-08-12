@@ -21,14 +21,32 @@ class RoutineItemCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              width: 48,
+              height: 48,
               color: BaseColors.primary,
-              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                item.exercise.iconUrl,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.directions_run, color: Colors.white),
+              ),
             ),
-            child: const Icon(Icons.directions_run, color: Colors.white),
           ),
           const SizedBox(width: 12),
           Expanded(

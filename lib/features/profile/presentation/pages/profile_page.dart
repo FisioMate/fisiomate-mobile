@@ -7,13 +7,7 @@ class ProfilePage extends StatelessWidget {
 
   static const String _role = 'Pasien Fisioterapi';
 
-  static const List<({IconData icon, String label})> _menuItems = [
-    (icon: Icons.person_outline, label: 'Edit Profil'),
-    (icon: Icons.notifications_outlined, label: 'Notifikasi'),
-    (icon: Icons.language_outlined, label: 'Bahasa'),
-    (icon: Icons.help_outline, label: 'Bantuan & Dukungan'),
-    (icon: Icons.info_outline, label: 'Tentang Aplikasi'),
-  ];
+  static const List<({IconData icon, String label})> _menuItems = [];
 
   @override
   Widget build(BuildContext context) {

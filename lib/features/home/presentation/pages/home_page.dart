@@ -3,6 +3,8 @@ part of '_pages.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  static const String _dummyPatientName = 'Zika';
+
   // TODO: replace with real data once ExerciseRepository is wired up.
   static final Map<DateTime, DayExerciseStatus> _dummyExerciseStatus = {
     for (final day in [1, 6, 9, 14, 17, 20, 21])
@@ -48,10 +50,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: replace with ExerciseRepository/GET /exercises once wired up —
-    // the backend only stores each routine item's schedule, so figuring
-    // out "today's" items from that schedule is frontend work regardless
-    // of whether the source is dummy or real.
+    // ! Demo only routine mapper
     final todaysRoutineItems = dummyRoutineItems
         .where((item) => item.days.contains(DayOfWeek.fromDate(DateTime.now())))
         .toList();
@@ -67,17 +66,9 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                BlocBuilder<CurrentPatientCubit, CurrentPatientState>(
-                  builder: (context, state) {
-                    final name = switch (state) {
-                      CurrentPatientLoaded(:final patient) => patient.name,
-                      _ => 'Pasien',
-                    };
-                    return PersonalizedGreeting(
-                      name: name,
-                      quote: "Konsistensi adalah kunci pemulihan Anda.",
-                    );
-                  },
+                PersonalizedGreeting(
+                  name: _dummyPatientName,
+                  quote: "Konsistensi adalah kunci pemulihan Anda.",
                 ),
                 SizedBox(height: 16),
                 TodaySessionCard(

@@ -27,11 +27,6 @@ class NavBar extends StatefulWidget {
       route: "/progress",
     ),
     NavBarItem(
-      icon: SvgPicture.asset("assets/icons/chat-icon.svg"),
-      label: "Chat",
-      route: "/chat",
-    ),
-    NavBarItem(
       icon: SvgPicture.asset("assets/icons/profile-icon.svg"),
       label: "Akun",
       route: "/profile",

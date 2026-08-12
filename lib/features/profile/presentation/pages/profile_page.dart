@@ -8,20 +8,8 @@ class ProfilePage extends StatelessWidget {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text("Ini profile page cuii"),
-          const SizedBox(height: 16),
-          // TODO: temporary — replace once the real profile page exists.
-          MainButton(
-            label: "Logout",
-            variant: ButtonVariant.error,
-            styleType: ButtonStyleType.outlined,
-            onPressed: () async {
-              await context.read<AuthRepository>().logout();
-              if (context.mounted) context.go('/auth');
-            },
-          ),
-        ],
+        // TODO: temporary — replace once the real profile page exists.
+        children: [const Text("Ini profile page cuii")],
       ),
     );
   }

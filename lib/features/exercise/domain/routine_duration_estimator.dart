@@ -5,7 +5,7 @@ import 'package:fisiomate/features/exercise/domain/entities/routine_item.dart';
 // guesswork (not ported from a reference project), used to keep the
 // "estimated minutes" shown on the home page and the pre-exercise page
 // in sync since both derive it from the same routine list.
-const _secondsPerRep = 3;
+const _secondsPerRep = 5;
 const _restSecondsBetweenSets = 15;
 
 int estimateRoutineDurationMinutes(List<RoutineItem> items) {
@@ -15,5 +15,5 @@ int estimateRoutineDurationMinutes(List<RoutineItem> items) {
         : item.targetRepsOrSeconds;
     return sum + item.sets * (activeSeconds + _restSecondsBetweenSets);
   });
-  return (totalSeconds / 60).ceil();
+  return (totalSeconds / 60).ceil() + 1;
 }
